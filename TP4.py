@@ -5,6 +5,7 @@
 import csv
 import os
 from fonctions_verifications import date_valide,ip_valide,recup_nombre
+from fonctions_analyse import statistique,recenser_elements,analyse_fichier,export_lignes_invalides,calcul_statistique
 
 chemin_actuel = os.getcwd()
 
@@ -34,8 +35,9 @@ def analyse_logs(fichier):
         entetes = next(lecture_entetes)     #On les stocke sous forme de liste
 
         lecture = csv.reader(f, delimiter = "|")    #Uniquement les liste avec "|" comme separateur
-        logs_valides = list()
         compteur_ligne=1
+
+        logs_valides = list()
         liste_erreurs = list()
         for ligne in lecture:
             compteur_ligne+=1
@@ -60,7 +62,7 @@ def analyse_logs(fichier):
             
 
             try:
-                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2], entetes[3]:ligne[3], entetes[4]:int(ligne[4]), entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
+                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3], entetes[4]:int(ligne[4]), entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
             except ValueError:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur de conversion,probablement le temps", 'Contenu': ligne})
                 continue
@@ -74,18 +76,34 @@ def analyse_logs(fichier):
 
 def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
     if dictionnaire:
-        print(dictionnaire)
+        for element in dictionnaire:
+            print(f"{(element+':'):<30} {dictionnaire[element]}")
+            print("="*len(element))
     elif liste_dictionnaire:
         for chaque_dictionnaire in liste_dictionnaire:
             for paires in chaque_dictionnaire:
                 #print(chaque_dictionnaire)
-                print(f"{paires:<15} {chaque_dictionnaire[paires]}")
-            print(end="\n\n")
+                print(f"{paires:<30} {chaque_dictionnaire[paires]}")
+            print(end="")
             print("------------------------------------------------------------------------------------")
-            print(end="\n\n")
+            print(end="\n")
 
 
 
 #Bloc pour tester le code
 logs = trouver_logs()['fichiers_log']   
-afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[0])['liste_erreurs'])
+fichier1 = analyse_logs(logs[2])['logs']
+#afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[2])['liste_erreurs'])
+#print(len(analyse_logs(logs[2])['logs']))
+
+#afficher_dictionnaire(liste_dictionnaire=statistique(analyse_logs(logs[0])['logs'])[0])
+#afficher_dictionnaire(liste_dictionnaire=statistique(analyse_logs(logs[2])['logs'])[1])
+
+#print(recenser_elements('methode','code',analyse_logs(logs[2])['logs']))
+#print(recenser_elements('code','methode',analyse_logs(logs[2])['logs']))
+
+#afficher_dictionnaire(dictionnaire=analyse_fichier(logs[2],analyse_logs(logs[2])['logs'],analyse_logs(logs[2])['liste_erreurs']))
+
+#export_lignes_invalides(logs[2], analyse_logs(logs[2])['liste_erreurs'])
+#print(statistique(fichier1))
+print(calcul_statistique(fichier1))

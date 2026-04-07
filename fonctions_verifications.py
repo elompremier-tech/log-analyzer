@@ -14,7 +14,6 @@ def date_valide(chaine):
 
         return {'date':date, 'heure': heure, 'annee': int(match_date.group(1)), 'mois': int(match_date.group(2)), 'jour' :int(match_date.group(3))}
     else:
-        print("Mauvais format")
         return False
     
 
@@ -23,11 +22,13 @@ def ip_valide(chaine):
     est bien constituee d'une suite de 1 a 3 chiffres separes par des points. A ameliorer"""
     pattern_simple = r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"
 
-    if re.match(pattern_simple, chaine):
+    if re.match(pattern_simple, chaine.replace(" ","")):
         return True
     else:
+        print(chaine)
         return False
     
+
 def recup_nombre(chaine):
     """Pour extraire le temps(separer les chiffres des lettres). La fonction prend une chaine de caracteres et retourne un entier"""
     chiffre = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
