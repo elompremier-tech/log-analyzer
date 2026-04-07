@@ -1,49 +1,91 @@
-#Nom: AMEGASHIE     /    DZALO
+#Nom: AMEGASHIE     /    DZALLO
 #Prenoms: Luke Benaia Ariel     /    Elom Ezechiel
 #Etudiant: 3 Maths
+
 import csv
 import os
+from fonctions_verifications import date_valide,ip_valide,recup_nombre
 
 chemin_actuel = os.getcwd()
 
-#On verifie si un fichier log_data se trouve dans le dossier actuel. Si oui, on y entre
 def trouver_logs():
+    #On verifie si un fichier log_data existe. Si oui, on y entre
     if os.path.exists("log_data"):
-        os.chdir(chemin_actuel+ '\\'+ "log_data")
+        os.chdir(chemin_actuel + '\\' + "log_data")
         contenu_dossier= os.listdir(".")
 
-        #pour chaque fichier dans le dossier on verifie l'extension
         fichiers_logs = list()
         fichiers_intrus = list()
+        #pour chaque fichier dans le dossier on verifie son extension
         for fichier in contenu_dossier:
             nom_fichier, extension = fichier.split(".")
             if extension == "csv":
-                fichiers_logs.append(fichier)
+                fichiers_logs.append(fichier)       #On ajoute le fichier a la liste des fichiers a traiter
             else:
-                fichiers_intrus.append(fichier)
+                fichiers_intrus.append(fichier)     #On recupere les fichiers intrus
     
-    return {'fichiers_logs': fichiers_logs, 'fichiers_intrus':fichiers_intrus}
+    return {'fichiers_log': fichiers_logs, 'fichiers_intru':fichiers_intrus}
     
+
+
 def analyse_logs(fichier):
     with open (fichier, "r" , encoding = 'utf-8') as f:
-        lecture = csv.reader(f)
-        entetes = next(lecture)
+        lecture_entetes = csv.reader(f)     #On recupere les entetes
+        entetes = next(lecture_entetes)     #On les stocke sous forme de liste
 
-        logs = list()
-        x=1
+        lecture = csv.reader(f, delimiter = "|")    #Uniquement les liste avec "|" comme separateur
+        logs_valides = list()
+        compteur_ligne=1
         liste_erreurs = list()
         for ligne in lecture:
-            x+=1
+            compteur_ligne+=1
             if "" in ligne:
-                liste_erreurs.append({'Fichier': fichier ,'Ligne': x ,'Raison': "Element vide", 'Contenu': ligne})
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Element vide", 'Contenu': ligne})
                 continue
             elif len(ligne) != 6:
-                liste_erreurs.append({'Fichier': fichier ,'Ligne': x ,'Raison': "Nombre de colonnes incorrect", 'Contenu': ligne})
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Nombre de colonnes incorrect/Mauvais separateur", 'Contenu': ligne})
                 continue
+            elif not date_valide(ligne[0]):
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Format de date incorrect", 'Contenu': ligne})
+                continue
+            elif not ip_valide(ligne[1]):
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Adresse IP invalide", 'Contenu': ligne})
+                continue
+            elif ligne[2].replace(" ","").lower() not in ["get", "post"]:
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Methode Invalide", 'Contenu': ligne})
+                continue
+            elif ligne[4].replace(" ","") not in ['200','404','500']:
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
+                continue
+            
 
             try:
-                logs.append({entetes[0]:ligne[0],entetes[1]:ligne[1],entetes[2]:ligne[2],entetes[3]:ligne[3],entetes[4]:int(ligne[4]),entetes[5]:ligne[5]})
+                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2], entetes[3]:ligne[3], entetes[4]:int(ligne[4]), entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
+            except ValueError:
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur de conversion,probablement le temps", 'Contenu': ligne})
+                continue
             except:
-                liste_erreurs.append({'Fichier': fichier ,'Ligne': x ,'Raison': "Inconnue,verification requise", 'Contenu': ligne})
+                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur Inconnue,Verification requise", 'Contenu': ligne})
+                continue
 
-    return {'logs': logs, 'liste_erreurs': liste_erreurs}
+    return {'logs': logs_valides, 'liste_erreurs': liste_erreurs}
+
+
+
+def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
+    if dictionnaire:
+        print(dictionnaire)
+    elif liste_dictionnaire:
+        for chaque_dictionnaire in liste_dictionnaire:
+            for paires in chaque_dictionnaire:
+                #print(chaque_dictionnaire)
+                print(f"{paires:<15} {chaque_dictionnaire[paires]}")
+            print(end="\n\n")
+            print("------------------------------------------------------------------------------------")
+            print(end="\n\n")
+
+
+
+#Bloc pour tester le code
+logs = trouver_logs()['fichiers_log']   
+afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[0])['liste_erreurs'])
