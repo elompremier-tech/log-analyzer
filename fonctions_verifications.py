@@ -14,7 +14,6 @@ def date_valide(chaine):
 
         return {'date':date, 'heure': heure, 'annee': int(match_date.group(1)), 'mois': int(match_date.group(2)), 'jour' :int(match_date.group(3))}
     else:
-        print("Mauvais format")
         return False
     
 
