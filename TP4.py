@@ -117,8 +117,16 @@ def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
 
 
 #Bloc pour tester le code
+total_lignes_analysees = 0
 logs = trouver_logs()['fichiers_log']
-print(logs)
+total_lignes_valides = list()
+for log in logs:
+    total_lignes_analysees += len(analyse_logs(log)['logs']) + len(analyse_logs(log)['liste_erreurs'])
+    total_lignes_valides += analyse_logs(log)['logs'][::]
+
+print(len(total_lignes_valides))
+print(total_lignes_analysees)
+
 #fichier3 = analyse_logs(logs[2])['logs']
 #print((analyse_logs(logs[2])['logs']))
 
