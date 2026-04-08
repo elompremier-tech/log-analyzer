@@ -1,0 +1,21 @@
+ANALYSE AVANCE
+
+La requeste la plus lente est faite au 2026-03-01 10:02:42 sur url 
+{'date': '2026-03-01 10:02:42', 'ip': '192.168.1.70', 'methode': 'POST', 'url': '', 'code': 404, 'temps': 927, 'ligne': 164}
+
+LES 5 URL LES PLUS DEMANDEES:
+/login: 283 requête
+
+/dashboard: 179 requête
+
+/profile: 169 requête
+
+/checkout: 30 requête
+
+/api/data?id=5: 28 requête
+
+log_2.csv est le fichier contenant plus de ligne valides
+
+Le nombre total de fichier à traiter est 3
+
+Le nombre total de ligne ignorés est 5733
