@@ -1,4 +1,5 @@
 from fonctions_verifications import recup_nombre
+from statistique import calcul_statistique
 
 def ajoutliste(listedepart,listearrivee,element):
     """Pour recenser des elements d'une liste de depart dans une liste d'arrivee tout en evitant les doublons dans la liste d'arrivee"""
@@ -32,14 +33,13 @@ def recenser_elements(identifiant,objet_comparer,chaine):
 
     return listestock
 
-
 def analyse_fichier(fichier,logs_valides,logs_invalides):
    rapport_fichier = dict()
    nmbre_lignes_lues = (len(logs_valides) + len(logs_invalides))
    nmbre_lignes_valides = len(logs_valides)
    nmbre_lignes_invalides = len(logs_invalides)
-   nmbre_erreurs = statistique(logs_valides)[1]
-   temps_moyen = statistique(logs_valides)[0][0]["Temps moyen"]
+   nmbre_erreurs = calcul_statistique(logs_valides)[1]
+   temps_moyen = calcul_statistique(logs_valides)[0][0]["Temps moyen"]
 
 
    rapport_fichier['Fichier'] = fichier
