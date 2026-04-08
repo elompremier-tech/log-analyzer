@@ -5,7 +5,7 @@
 import csv
 import os
 from fonctions_verifications import date_valide,ip_valide,recup_nombre
-from fonctions_analyse import statistique,recenser_elements,analyse_fichier,export_lignes_invalides,calcul_statistique
+from fonctions_analyse import recenser_elements,analyse_fichier,export_lignes_invalides,ajoutliste
 
 chemin_actuel = os.getcwd()
 
@@ -39,8 +39,14 @@ def analyse_logs(fichier):
 
         logs_valides = list()
         liste_erreurs = list()
+        codes_HTTP = list()
         for ligne in lecture:
             compteur_ligne+=1
+
+            for element in ligne:
+                element = element.strip()
+
+            
             if "" in ligne:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Element vide", 'Contenu': ligne})
                 continue
@@ -56,7 +62,15 @@ def analyse_logs(fichier):
             elif ligne[2].replace(" ","").lower() not in ["get", "post"]:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Methode Invalide", 'Contenu': ligne})
                 continue
-            elif ligne[4].replace(" ","") not in ['200','404','500']:
+
+            
+            if recup_nombre(ligne[4].replace(" ","")):
+                code = ligne[4].replace(" ","")
+                codes_HTTP = ajoutliste(ligne, codes_HTTP, 4)
+                if code not in codes_HTTP:
+                    liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
+                    continue
+            else:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
                 continue
             
@@ -69,7 +83,8 @@ def analyse_logs(fichier):
             except:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur Inconnue,Verification requise", 'Contenu': ligne})
                 continue
-
+    
+    print(codes_HTTP)
     return {'logs': logs_valides, 'liste_erreurs': liste_erreurs}
 
 
@@ -92,8 +107,9 @@ def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
 
 #Bloc pour tester le code
 logs = trouver_logs()['fichiers_log']   
-fichier1 = analyse_logs(logs[2])['logs']
-#afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[2])['liste_erreurs'])
+#fichier3 = analyse_logs(logs[2])['logs']
+
+#afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[1])['logs'])
 #print(len(analyse_logs(logs[2])['logs']))
 
 #afficher_dictionnaire(liste_dictionnaire=statistique(analyse_logs(logs[0])['logs'])[0])
@@ -105,5 +121,7 @@ fichier1 = analyse_logs(logs[2])['logs']
 #afficher_dictionnaire(dictionnaire=analyse_fichier(logs[2],analyse_logs(logs[2])['logs'],analyse_logs(logs[2])['liste_erreurs']))
 
 #export_lignes_invalides(logs[2], analyse_logs(logs[2])['liste_erreurs'])
-#print(statistique(fichier1))
-print(calcul_statistique(fichier1))
+#afficher_dictionnaire(calcul_statistiques(fichier3))
+#print(fichier3)
+
+analyse_logs(logs[1])

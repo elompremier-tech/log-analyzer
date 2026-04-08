@@ -1,51 +1,22 @@
-code_erreurs = [404, 500]
+from fonctions_verifications import recup_nombre
 
-def statistique(logs):
+def ajoutliste(listedepart,listearrivee,element):
+    """Pour recenser des elements d'une liste de depart dans une liste d'arrivee tout en evitant les doublons dans la liste d'arrivee"""
+    for chaque in listedepart:
+        if chaque[element] not in listearrivee:
+            listearrivee.append(chaque[element])
+        else:
+            continue
+    return listearrivee
 
-    requests_total = len(logs)
-    nombres_get = 0
-    nombres_post = 0
-    nombres_erreurs = 0
-    somme_tps = 0
-    moyen_temps = 0
-    statistique=[]
-    liste_code=[]
-
-    for log in logs:
-        if log["methode"] == "GET":
-            nombres_get += 1
-        elif log["methode"] == "POST":
-            nombres_post += 1
-
-        if log["code"] in code_erreurs:
-            nombres_erreurs += 1
-
-        somme_tps += log["temps"]
-        trouvé=False
-        for code in liste_code:
-       
-         if code["code"] == log["code"]:
-           code["nbre_requête"]+=1
-           trouvé=True
-           break
-
-        if not trouvé:
-         liste_code.append({'code':log["code"],
-                         'nbre_requête':1})  
-
-    if requests_total > 0:
-        moyen_temps = somme_tps / requests_total
-
+def ajoutliste(listedepart,listearrivee,index_element):
+    """Pour recenser des elements d'une liste de depart dans une liste d'arrivee tout en evitant les doublons dans la liste d'arrivee"""
     
-    statistique.append({
-    "Nombre total de requêtes": requests_total,
-    "Nombre de requêtes GET": nombres_get,
-    "Nombre de requêtes POST": nombres_post,
-    "Nombre d'erreurs": nombres_erreurs,
-    "Temps moyen": f"{moyen_temps:.2f} ms"
-   })
-    return statistique ,liste_code
-
+    if recup_nombre(listedepart[index_element].strip()) not in listearrivee:
+        listearrivee.append(recup_nombre(listedepart[index_element]))
+    else:
+        return listearrivee
+    return listearrivee
 
 def recenser_elements(identifiant,objet_comparer,chaine):
     """Elle permet de faire le cumul de valeurs tout en leur attribuant des identifiants. Ex: Nom du client et somme depensee. Pour chaque 
@@ -92,48 +63,3 @@ def export_lignes_invalides(fichier, lignes_invalides):
                 f.write("="*len(element))
                 f.write("\n")
             f.write("\n*****************************************************\n")
-
-
-def calcul_statistique(logs):
-
-    requests_total = len(logs)
-    nombres_get = 0
-    nombres_post = 0
-    nombres_erreurs = 0
-    somme_tps = 0
-    moyen_temps = 0
-    result_statistique = ""
-    liste_code = []
-
-    for log in logs:
-        if log["methode"] == "GET":
-            nombres_get += 1
-        elif log["methode"] == "POST":
-            nombres_post += 1
-
-        if log["code"] in code_erreurs:
-            nombres_erreurs += 1
-
-        somme_tps += log["temps"]
-
-        code_trouvé = False
-        for code in liste_code:
-       
-         if code["code"] == log["code"]:
-           code["nbre_requête"]+=1
-           code_trouvé = True
-           break
-
-        if not code_trouvé:
-         liste_code.append({'code':log["code"],'nbre_requête':1})  
-
-    if requests_total > 0:
-        moyen_temps = somme_tps / requests_total
-
-    result_statistique+=f"\n STATISTIQUE\nNombre total de requêtes: {requests_total}\nNombre de requêtes GET: {nombres_get}\nNombre de requêtes POST: {nombres_post}\nNombre d'erreurs: {nombres_erreurs}\nTemps moyen:{moyen_temps:.2f} ms\n"
-    
-    result_statistique+=f"\nNOMBRE DE REQUETE HTTP PAR CODE\n\n"
-    for code in liste_code:
-     result_statistique+=f"\n--------------------------------------------------------------\ncode:{code['code']}\n {code['nbre_requête']} requête(s)"
-    
-    return result_statistique
