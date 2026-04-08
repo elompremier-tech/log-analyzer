@@ -53,8 +53,8 @@ def analyse_fichier(fichier,logs_valides,logs_invalides):
 
 
 def export_lignes_invalides(fichier, lignes_invalides):
-   nom, extension = fichier.split('.')
-   with open ('lignes_invalides_' +nom+ ".txt", 'w', encoding = 'utf-8') as f:
+   #nom, extension = fichier.split('.')
+   with open (fichier, 'w', encoding = 'utf-8') as f:
       f.write(f"EXPORT DES LIGNES INVALIDES DU FICHIER: {fichier}\n")
       f.write("===================================================\n\n")
       for dictionnaire in lignes_invalides:
