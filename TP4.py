@@ -5,29 +5,35 @@
 import csv
 import os
 from fonctions_verifications import date_valide,ip_valide,recup_nombre
-from fonctions_analyse import statistique,recenser_elements,analyse_fichier,export_lignes_invalides,calcul_statistique
-
-chemin_actuel = os.getcwd()
+from fonctions_analyse import recenser_elements,analyse_fichier,export_lignes_invalides,ajoutliste
+from statistique import calcul_statistique
+import re
 
 def trouver_logs():
+    chemin_actuel = os.getcwd()
+    fichiers_logs = list()
+    fichiers_intrus = list()
+
     #On verifie si un fichier log_data existe. Si oui, on y entre
     if os.path.exists("log_data"):
-        os.chdir(chemin_actuel + '\\' + "log_data")
-        contenu_dossier= os.listdir(".")
+        #os.chdir(chemin_actuel + '\\' + "log_data")
 
-        fichiers_logs = list()
-        fichiers_intrus = list()
+        dossier = chemin_actuel + '\\' + "log_data"
+        contenu_dossier= os.listdir(dossier)
+
         #pour chaque fichier dans le dossier on verifie son extension
         for fichier in contenu_dossier:
+            chemin_complet = os.path.join(dossier, fichier)
             nom_fichier, extension = fichier.split(".")
             if extension == "csv":
-                fichiers_logs.append(fichier)       #On ajoute le fichier a la liste des fichiers a traiter
+                fichiers_logs.append(chemin_complet)       #On ajoute le fichier a la liste des fichiers a traiter
             else:
-                fichiers_intrus.append(fichier)     #On recupere les fichiers intrus
-    
+                fichiers_intrus.append(chemin_complet)     #On recupere les fichiers intrus
+        
+    #os.chdir(chemin_actuel)
+        
     return {'fichiers_log': fichiers_logs, 'fichiers_intru':fichiers_intrus}
     
-
 
 def analyse_logs(fichier):
     with open (fichier, "r" , encoding = 'utf-8') as f:
@@ -39,8 +45,14 @@ def analyse_logs(fichier):
 
         logs_valides = list()
         liste_erreurs = list()
+        codes_HTTP = list()
         for ligne in lecture:
             compteur_ligne+=1
+
+            for element in ligne:
+                element = element.strip()
+
+            
             if "" in ligne:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Element vide", 'Contenu': ligne})
                 continue
@@ -56,22 +68,36 @@ def analyse_logs(fichier):
             elif ligne[2].replace(" ","").lower() not in ["get", "post"]:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Methode Invalide", 'Contenu': ligne})
                 continue
-            elif ligne[4].replace(" ","") not in ['200','404','500']:
-                liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
-                continue
+
+            
+            if recup_nombre(ligne[4].replace(" ","")):
+                
+                pattern_code = r"^\d{3}$"
+                
+                if not re.match(pattern_code, ligne[4].replace(" ","")):
+                    liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP non standard", 'Contenu': ligne})
+                    continue
+                else:
+                    code = recup_nombre(ligne[4].replace(" ",""))
+                    codes_HTTP = ajoutliste(ligne, codes_HTTP, 4)
+                    if code not in codes_HTTP:
+                        liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
+                        continue
+            #else:
+                #liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Code HTTP Invalide", 'Contenu': ligne})
+                #continue
             
 
             try:
-                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3], entetes[4]:int(ligne[4]), entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
+                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3], entetes[4]: code, entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
             except ValueError:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur de conversion,probablement le temps", 'Contenu': ligne})
                 continue
             except:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur Inconnue,Verification requise", 'Contenu': ligne})
                 continue
-
+    
     return {'logs': logs_valides, 'liste_erreurs': liste_erreurs}
-
 
 
 def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
@@ -89,14 +115,16 @@ def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
             print(end="\n")
 
 
-
 #Bloc pour tester le code
-logs = trouver_logs()['fichiers_log']   
-fichier1 = analyse_logs(logs[2])['logs']
-#afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[2])['liste_erreurs'])
-#print(len(analyse_logs(logs[2])['logs']))
+logs = trouver_logs()['fichiers_log']
+#print(logs)
+#fichier3 = analyse_logs(logs[2])['logs']
+#print((analyse_logs(logs[2])['logs']))
 
-#afficher_dictionnaire(liste_dictionnaire=statistique(analyse_logs(logs[0])['logs'])[0])
+#afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[1])['logs'])
+print(len(analyse_logs(logs[1])['logs']))
+
+afficher_dictionnaire(dictionnaire=calcul_statistique(analyse_logs(logs[1])['logs']))
 #afficher_dictionnaire(liste_dictionnaire=statistique(analyse_logs(logs[2])['logs'])[1])
 
 #print(recenser_elements('methode','code',analyse_logs(logs[2])['logs']))
@@ -105,5 +133,7 @@ fichier1 = analyse_logs(logs[2])['logs']
 #afficher_dictionnaire(dictionnaire=analyse_fichier(logs[2],analyse_logs(logs[2])['logs'],analyse_logs(logs[2])['liste_erreurs']))
 
 #export_lignes_invalides(logs[2], analyse_logs(logs[2])['liste_erreurs'])
-#print(statistique(fichier1))
-print(calcul_statistique(fichier1))
+#afficher_dictionnaire(calcul_statistiques(fichier3))
+#print(fichier3)
+
+#analyse_logs(logs[1])

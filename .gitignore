@@ -1,0 +1,28 @@
+# --- PYTHON ---
+# Cache de compilation (ce que tu as vu apparaître)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels (très important de NE PAS les push)
+venv/
+env/
+.venv/
+
+# --- SYSTÈME ---
+# Fichiers invisibles de Windows ou Mac
+Thumbs.db
+.DS_Store
+
+# --- VS CODE ---
+# Configuration locale de ton éditeur (facultatif)
+.vscode/
+
+# --- DONNÉES & LOGS ---
+# Si tu génères des fichiers de logs ou des gros datasets
+*.log
+*.sqlite
+
+# ---AUTRES---
+test.py
