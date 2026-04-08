@@ -2,7 +2,7 @@
 #Prenoms: Luke Benaia Ariel     /    Elom Ezechiel
 #Etudiant: 3 Maths
 
-from package.fonctions_verifications import *
+from package.analyse_avancee import analyse_avancee
 from package.fonctions_analyse import *
 from package.statistique import *
 from package.security_analysis import * 
@@ -28,6 +28,7 @@ def menu():
             menu()
         
         logs = trouver_logs()['fichiers_log']
+        
         if choix == 1:
             for log in logs:
                 print(f"\n Fichier : {log.upper()} \n")
@@ -45,7 +46,7 @@ def menu():
 
         elif choix == 3:
 
-            print("3.Afficher l’analyse avancée")
+            print(analyse_avancee())
 
         elif choix == 4:
 
@@ -77,5 +78,4 @@ def menu():
         
     return print("Vous quittez le programme. Nous esperons vous revoir sous peu!")  
   
-
 menu()

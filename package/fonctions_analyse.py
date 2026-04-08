@@ -105,6 +105,7 @@ def analyse_logs(fichier):
 
 
 def analyse_fichier(fichier,logs_valides,logs_invalides):
+   """"""
    rapport_fichier = dict()
    nmbre_lignes_lues = (len(logs_valides) + len(logs_invalides))
    nmbre_lignes_valides = len(logs_valides)
