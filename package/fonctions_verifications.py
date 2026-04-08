@@ -3,7 +3,7 @@ import re
 def date_valide(chaine):
 
     match_date = re.search(r"(\d{4})[/-](\d{2})[/-](\d{2})", chaine)
-    match_heure = re.search(r"(\d{2}):(\d{2}):(\d{2})", chaine)
+    match_heure = re.search(r"([01]\d|2[0-3]):([0-5]\d):([0-5]\d)", chaine)
     
     if match_date and match_heure:
         date = match_date.group(1) +'-'+ match_date.group(2) +'-'+ match_date.group(3)
