@@ -38,8 +38,8 @@ def analyse_fichier(fichier,logs_valides,logs_invalides):
    nmbre_lignes_lues = (len(logs_valides) + len(logs_invalides))
    nmbre_lignes_valides = len(logs_valides)
    nmbre_lignes_invalides = len(logs_invalides)
-   nmbre_erreurs = calcul_statistique(logs_valides)[1]
-   temps_moyen = calcul_statistique(logs_valides)[0][0]["Temps moyen"]
+   nmbre_erreurs = calcul_statistique(logs_valides)['Nombre d erreurs']
+   temps_moyen = calcul_statistique(logs_valides)["Temps moyen"]
 
 
    rapport_fichier['Fichier'] = fichier
