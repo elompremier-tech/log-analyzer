@@ -38,7 +38,7 @@ def recup_nombre(chaine):
         if x in chiffre:
             entier+=x
 
-    if entier != chaine.replace("m","",1).replace("s","",1):
+    if entier != chaine.lower().replace("m","",1).replace("s","",1).replace(" ",""):
         return False
 
     return int(entier)
