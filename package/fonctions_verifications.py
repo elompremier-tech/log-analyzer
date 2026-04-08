@@ -42,3 +42,5 @@ def recup_nombre(chaine):
         return False
 
     return int(entier)
+
+print(date_valide('2026-03-01 11:01:54'))
