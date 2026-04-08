@@ -26,7 +26,7 @@ def analyse_avancee():
 
     if len(fichier_à_traité) == 0:
         Message +=f"Aucune donnee valide a analyser\n"
-        return None, None
+        return Message
 
     for ligne in fichier_à_traité:
         url = ligne['url']
@@ -52,8 +52,5 @@ def analyse_avancee():
 
  
     Message +=f"{fichier_plus_valide} est le fichier contenant plus de ligne valides\n\nLe nombre total de fichier à traiter est {nbre_total_fichier_traité}\n\nLe nombre total de ligne ignorés est {nbre_total_ligne_ignorés}\n"  
-    print(Message)
+    return Message
 
-    
-
-analyse_avancee()

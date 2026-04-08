@@ -6,17 +6,20 @@ import csv
 import os
 from fonctions_verifications import date_valide,ip_valide,recup_nombre
 from fonctions_analyse import statistique,recenser_elements,analyse_fichier,export_lignes_invalides,calcul_statistique
+from security_analisis import securite_analyse
+#from analyse_avancé import analyse_avancee
 
-chemin_actuel = os.getcwd()
 
 def trouver_logs():
+    chemin_actuel = os.getcwd()
+    fichiers_logs = list()
+    fichiers_intrus = list()
     #On verifie si un fichier log_data existe. Si oui, on y entre
     if os.path.exists("log_data"):
         os.chdir(chemin_actuel + '\\' + "log_data")
         contenu_dossier= os.listdir(".")
 
-        fichiers_logs = list()
-        fichiers_intrus = list()
+        
         #pour chaque fichier dans le dossier on verifie son extension
         for fichier in contenu_dossier:
             nom_fichier, extension = fichier.split(".")
@@ -24,13 +27,18 @@ def trouver_logs():
                 fichiers_logs.append(fichier)       #On ajoute le fichier a la liste des fichiers a traiter
             else:
                 fichiers_intrus.append(fichier)     #On recupere les fichiers intrus
+
+        os.chdir(chemin_actuel)     
+    
     
     return {'fichiers_log': fichiers_logs, 'fichiers_intru':fichiers_intrus}
     
 
 
 def analyse_logs(fichier):
-    with open (fichier, "r" , encoding = 'utf-8') as f:
+    dossier_script = os.path.dirname(os.path.abspath(__file__))
+    chemin_fichier = os.path.join(dossier_script, "log_data", fichier)
+    with open (chemin_fichier, "r" , encoding = 'utf-8') as f:
         lecture_entetes = csv.reader(f)     #On recupere les entetes
         entetes = next(lecture_entetes)     #On les stocke sous forme de liste
 
@@ -62,7 +70,7 @@ def analyse_logs(fichier):
             
 
             try:
-                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3], entetes[4]:int(ligne[4]), entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
+                logs_valides.append({entetes[0]:ligne[0].strip(), entetes[1]:ligne[1].strip(), entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3].strip(), entetes[4]:int((ligne[4]).strip()), entetes[5]: recup_nombre(ligne[5].strip()), 'ligne': compteur_ligne})
             except ValueError:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur de conversion,probablement le temps", 'Contenu': ligne})
                 continue
@@ -91,8 +99,8 @@ def afficher_dictionnaire(dictionnaire=None,liste_dictionnaire=None):
 
 
 #Bloc pour tester le code
-logs = trouver_logs()['fichiers_log']   
-fichier1 = analyse_logs(logs[2])['logs']
+#logs = trouver_logs()['fichiers_log']   
+#fichier1 = analyse_logs(logs[1])['logs']
 #afficher_dictionnaire(liste_dictionnaire=analyse_logs(logs[2])['liste_erreurs'])
 #print(len(analyse_logs(logs[2])['logs']))
 
@@ -106,4 +114,7 @@ fichier1 = analyse_logs(logs[2])['logs']
 
 #export_lignes_invalides(logs[2], analyse_logs(logs[2])['liste_erreurs'])
 #print(statistique(fichier1))
-print(calcul_statistique(fichier1))
+#print(calcul_statistique(fichier1))
+#securite_analyse(fichier1)
+#analyse_avancee(fichier1)
+
