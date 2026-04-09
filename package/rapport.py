@@ -1,4 +1,4 @@
-from package.analyse_avancé import analyse_avancee
+from package.analyse_avancee import analyse_avancee
 from package.statistique import calcul_statistique
 
 #print(analyse_avancee())

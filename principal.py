@@ -2,7 +2,7 @@
 #Prenoms: Luke Benaia Ariel     /    Elom Ezechiel
 #Etudiant: 3 Maths
 
-from package.analyse_avancé import analyse_avancee
+from package.analyse_avancee import analyse_avancee
 from package.fonctions_verifications import *
 from package.fonctions_analyse import *
 from package.statistique import *
