@@ -93,7 +93,7 @@ def analyse_logs(fichier):
             
 
             try:
-                logs_valides.append({entetes[0]:ligne[0], entetes[1]:ligne[1], entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3], entetes[4]: code, entetes[5]: recup_nombre(ligne[5]), 'ligne': compteur_ligne})
+                logs_valides.append({entetes[0]:ligne[0].strip(), entetes[1]:ligne[1].strip(), entetes[2]:ligne[2].replace(" ",""), entetes[3]:ligne[3].strip(), entetes[4]: code, entetes[5]: recup_nombre(ligne[5].strip()), 'ligne': compteur_ligne})
             except ValueError:
                 liste_erreurs.append({'Fichier': fichier ,'Ligne': compteur_ligne ,'Raison': "Erreur de conversion,probablement le temps", 'Contenu': ligne})
                 continue

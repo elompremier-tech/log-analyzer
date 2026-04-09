@@ -45,6 +45,6 @@ def calcul_statistique(logs):
     
     code_str=""
     for code in liste_code:
-     code_str+=f"{code['code']} a effectué {code['nbre_requête']} requête(s)\n"
-    result_statistique['codes'] = code_str
+     code_str+=f"\n{code['code']} a effectué {code['nbre_requête']} requête(s)\n"
+    result_statistique['nombre de requête par code HTTP'] = code_str
     return result_statistique
