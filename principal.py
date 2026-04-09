@@ -26,7 +26,7 @@ def menu():
             choix=int(input("Bienvenue dans votre DataCenter. Que voulez-vous faire?"))
         except ValueError:
             print("Entrez un entier. Essayez a nouveau")
-            menu()
+            
         
         logs = trouver_logs()['fichiers_log']
         
