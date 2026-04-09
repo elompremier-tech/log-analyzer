@@ -2,11 +2,12 @@
 #Prenoms: Luke Benaia Ariel     /    Elom Ezechiel
 #Etudiant: 3 Maths
 
-from package.analyse_avancee import analyse_avancee
+from package.analyse_avancee import analyse_avance
 from package.fonctions_analyse import *
 from package.statistique import *
 from package.security_analysis import * 
 from package.fonctions_affichage import *
+from package.generer_rapport import *
 
 
 def menu():
@@ -30,11 +31,14 @@ def menu():
         logs = trouver_logs()['fichiers_log']
         
         if choix == 1:
+            ligne_valide=[]
             for log in logs:
-                print(f"\n Fichier : {log.upper()} \n")
-                print("="*30, "\n")
-                afficher_dictionnaire(dictionnaire=calcul_statistique(analyse_logs(log)['logs']))
-                print("\n", "*"*30, "\n")
+                ligne_valide +=analyse_logs(log)['logs']
+            print(f"\n Fichier : {log.upper()} \n")
+            print("="*30, "\n")
+            afficher_dictionnaire(dictionnaire=calcul_statistique(ligne_valide))
+            print("\n", "*"*30, "\n")
+    
 
         elif choix == 2:
 
@@ -46,7 +50,7 @@ def menu():
 
         elif choix == 3:
 
-            print(analyse_avancee())
+            print(analyse_avance())
 
         elif choix == 4:
 
@@ -56,8 +60,8 @@ def menu():
                 print("\n", "*"*30, "\n")
 
         elif choix == 5:
-
-            print("5.Générer un rapport")
+           génération_rapport()      
+           print("\nLe rapport à été édité avec succès")
 
         elif choix == 6:
 

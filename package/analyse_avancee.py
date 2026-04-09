@@ -17,7 +17,7 @@ def mini_analy_fichier():
 fichier_à_traité,fichier_plus_valide,nbre_total_fichier_traité,nbre_total_ligne_ignorés = mini_analy_fichier()
 
 
-def analyse_avancee():
+def analyse_avance():
     compteur_url = {}
     compteur = 0
     requeste_plus_lente = None
