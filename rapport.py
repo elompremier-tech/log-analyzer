@@ -1,5 +1,5 @@
 from analyse_avancé import analyse_avancee
-from statistique import calcul_statistique
+from package.statistique import calcul_statistique
 
 #print(analyse_avancee())
 
