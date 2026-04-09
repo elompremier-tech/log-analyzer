@@ -3,7 +3,6 @@
 #Etudiant: 3 Maths
 
 from package.analyse_avancee import analyse_avancee
-from package.fonctions_verifications import *
 from package.fonctions_analyse import *
 from package.statistique import *
 from package.security_analysis import * 
@@ -29,6 +28,7 @@ def menu():
             menu()
         
         logs = trouver_logs()['fichiers_log']
+        
         if choix == 1:
             for log in logs:
                 print(f"\n Fichier : {log.upper()} \n")
