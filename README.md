@@ -12,7 +12,7 @@ Getting Started
 Prerequisites
 - Python 3.8 or higher
 Installation
-Clone the repository: git clone 🔗 view-link.cx/oguNJVgpNGs cd TP4
+Clone the repository:git clone 🔗 view-link.cx/7RxCPHUz8pJ cd log-analyzer
 Usage
 Run the main script: python principal.py
 Follow the on-screen menu to select analysis tasks, generate reports, or inspect invalid entries
